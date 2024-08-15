@@ -1,0 +1,18 @@
+
+# Authenticate to Microsoft Azure 
+Connect-AzAccount
+
+# Create New Azure Resource Group
+New-AzResourceGroup -Name demo  -Location eastus
+
+# Deploy Azure resource 1
+New-AzResourceGroupDeployment -Name myfirstdeployment -ResourceGroupName demo -TemplateFile .\vnet.json
+
+# Deploy Azure resource 2
+New-AzResourceGroupDeployment -Name myseconddeployment -ResourceGroupName demo -TemplateFile .\vm1.json -TemplateParameterFile  .\vm1.parms.json
+
+# Deploy Azure resource 3
+New-AzResourceGroupDeployment -Name mythirddeployment -ResourceGroupName demo -TemplateFile .\vm2.json -TemplateParameterFile  .\vm2.parms.json
+
+# Deploy Azure resource 4
+New-AzResourceGroupDeployment -Name myfourthdeployment -ResourceGroupName demo -TemplateFile .\lb.json -TemplateParameterFile  .\lb.parms.json

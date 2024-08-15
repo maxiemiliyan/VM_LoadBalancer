@@ -1,0 +1,11 @@
+# Technologies Used
+
+- Microsoft Azure
+- ARM Templates
+- Azure Virtual Network (VNet)
+- Azure Load Balancer
+- Azure Virtual Machines
+- Azure Public IP Address
+- Azure Network Security Groups (NSGs)
+- Azure PowerShell
+- HTTP Health Probes

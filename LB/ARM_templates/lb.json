@@ -1,0 +1,152 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        
+        "name": {
+            "type": "String"
+        },
+        "location": {
+            "type": "String"
+        },
+        "sku": {
+            "type": "String"
+        },
+        "tier": {
+            "type": "String"
+        }
+    },
+    "functions": [],
+    "variables": {},
+    "resources": [
+        
+        {
+            "apiVersion": "2021-05-01",
+            "name": "[parameters('name')]",
+            "type": "Microsoft.Network/loadBalancers",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "Microsoft.Network/publicIPAddresses/pip01"
+            ],
+            "tags": {},
+            "properties": {
+                "frontendIPConfigurations": [
+                    {
+                        "name": "fip01",
+                        "properties": {
+                            "publicIPAddress": {
+                                "id": "/subscriptions/baff284b-b98d-4a50-ab18-1d1ae16022b9/resourceGroups/demo/providers/Microsoft.Network/publicIPAddresses/pip01"
+                            }
+                        }
+                    }
+                ],
+                "backendAddressPools": [
+                    {
+                        "name": "bip"
+                    }
+                ],
+                "probes": [
+                    {
+                        "id": "/subscriptions/baff284b-b98d-4a50-ab18-1d1ae16022b9/resourceGroups/demo/providers/Microsoft.Network/loadBalancers/lb01/probes/hp01",
+                        "name": "hp01",
+                        "properties": {
+                            "protocol": "HTTP",
+                            "port": 80,
+                            "requestPath": "/",
+                            "intervalInSeconds": 5,
+                            "numberOfProbes": 1
+                        }
+                    }
+                ],
+                "loadBalancingRules": [
+                    {
+                        "name": "lbrule",
+                        "properties": {
+                            "frontendIPConfiguration": {
+                                "id": "/subscriptions/baff284b-b98d-4a50-ab18-1d1ae16022b9/resourceGroups/demo/providers/Microsoft.Network/loadBalancers/lb01/frontendIPConfigurations/fip01"
+                            },
+                            "frontendPort": 80,
+                            "backendPort": 80,
+                            "enableFloatingIP": false,
+                            "idleTimeoutInMinutes": 4,
+                            "protocol": "TCP",
+                            "loadDistribution": "Default",
+                            "probe": {
+                                "id": "/subscriptions/baff284b-b98d-4a50-ab18-1d1ae16022b9/resourceGroups/demo/providers/Microsoft.Network/loadBalancers/lb01/probes/hp01"
+                            },
+                            "disableOutboundSnat": true,
+                            "enableTcpReset": false,
+                            "backendAddressPools": [
+                                {
+                                    "id": "/subscriptions/baff284b-b98d-4a50-ab18-1d1ae16022b9/resourceGroups/demo/providers/Microsoft.Network/loadBalancers/lb01/backendAddressPools/bip"
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "inboundNatRules": [],
+                "outboundRules": []
+            },
+            "sku": {
+                "name": "[parameters('sku')]",
+                "tier": "[parameters('tier')]"
+            }
+        },
+        {
+            "apiVersion": "2021-05-01",
+            "type": "Microsoft.Network/loadBalancers/backendAddressPools",
+            "name": "lb01/bip",
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "Microsoft.Network/loadBalancers/lb01"
+            ],
+            "properties": {
+                "loadBalancerBackendAddresses": [
+                    {
+                        "name": "daaabd03-4428-41b2-adf7-bb9b5ead66dc",
+                        "properties": {
+                            "virtualNetwork": {
+                                "id": "/subscriptions/baff284b-b98d-4a50-ab18-1d1ae16022b9/resourceGroups/demo/providers/Microsoft.Network/virtualNetworks/vnet1"
+                            },
+                            "ipAddress": "10.0.0.4",
+                            "adminState": "None"
+                        }
+                    },
+                    {
+                        "name": "149549cb-782a-415f-b1f9-0e4901167b37",
+                        "properties": {
+                            "virtualNetwork": {
+                                "id": "/subscriptions/baff284b-b98d-4a50-ab18-1d1ae16022b9/resourceGroups/demo/providers/Microsoft.Network/virtualNetworks/vnet1"
+                            },
+                            "ipAddress": "10.0.0.5",
+                            "adminState": "None"
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "2022-05-01",
+            "type": "Microsoft.Network/publicIpAddresses",
+            "name": "pip01",
+            "location": "[parameters('location')]",
+            "dependsOn": [],
+            "tags": {},
+            "properties": {
+                "publicIPAddressVersion": "IPv4",
+                "publicIPAllocationMethod": "Static",
+                "idleTimeoutInMinutes": 4
+            },
+            "sku": {
+                "name": "[parameters('sku')]",
+                "tier": "[parameters('tier')]"
+            },
+            "zones": [
+                "2",
+                "1",
+                "3"
+            ]
+        }
+    ],
+    "outputs": {}
+}
